@@ -1,11 +1,12 @@
 import json
 import sys
+from threading import Thread
 from util import read_json_zip_range
 from database import create, batch_insert
 from parsel import Selector
 import time
 
-path = r"C:\Users\yash.limbasiya\Desktop\Project's\restaurent\Garb_food_restaurent\Grab_food_zpages_60k"
+path = r"C:\Users\yash.limbasiya\Desktop\Projects\restaurent\Garb_food_restaurent\Grab_food_zpages_60k"
 TABLE_NAME = "restaurent"
 BATCH_SIZE = 500
 
@@ -51,7 +52,7 @@ def parse(json_data):
 
 
 def main(start_index, end_index):
-    create(TABLE_NAME)
+    
 
     batch = []
     total = 0
@@ -73,18 +74,25 @@ def main(start_index, end_index):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python parsel_load.py <start> <end>")
-        sys.exit(1)
+    create(TABLE_NAME)
+    stating_time = time.time()
+    
+    #use Thread's
+    threads = []
+    step = 10000
+    total_files = 60000
 
-    start = int(sys.argv[1])
-    end   = int(sys.argv[2])
+    for start in range(0, total_files, step):
+        end = start + step
+        target_obj = Thread(target=main, args=(start, end))
+        threads.append(target_obj)
+        target_obj.start()
 
-    st = time.time()
-    main(start, end)
-    tt = time.time() - st
-    print(f"Total time: {tt:.2f} seconds")
+    for t in threads:
+        t.join()
+    end_time = time.time()
 
+    print('Execution Time : ', end_time - stating_time)
 
 
     

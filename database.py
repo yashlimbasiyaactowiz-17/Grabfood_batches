@@ -1,17 +1,13 @@
 import mysql.connector
-
-conn = None
-
 def connect():
-    global conn
-    if conn is None or not conn.is_connected():
-        conn = mysql.connector.connect(
+
+      conn = mysql.connector.connect(
             host="localhost",
             user="root",
             password="actowiz",
-            database="pdp_new"
+            database="pdp_new" 
         )
-    return conn
+      return conn
 
 def create(table_name: str):
     queary = f"""
